@@ -990,7 +990,7 @@ System.out.println(instant1);
 ### 方式一：自然排序：java.lang.Comparable
 
 像String、包装类等，内部都实现了Comparable接口，并重写了compareTo()方法
-**重写compareTo()**
+**重写compareTo(Object obj)**
 1.比较结果由小到大排列 ，分别对应负数、零、正数（即返回三种整数）
 2.对于自定义类的排序，需要实现Comparable接口并重写compareTo()方法
 
@@ -1495,11 +1495,11 @@ for()循环的增强版，可用于遍历集合和数组
 
 **格式：**	`for(类型 接收变量 : 集合) {...}`
 
-过程：	从集合种中依次取元素并赋值给接收变量再进行操作
+过程：	从集合中依次取元素并赋值给接收变量再进行操作
 
 ### List接口
 
-储存元素有序、可重复；集合中每一个元素都有其对应的顺序索引；相当于动态数组。
+储存元素**有序、可重复**；集合中每一个元素都有其对应的**顺序索引**；相当于动态数组。
 
 **三个实现类：**
 ArrayList：主要实现类。**线程不安全、效率高**。底层采用`Object[] elementData`存储数据。
@@ -1513,7 +1513,7 @@ Vector：古老实现类。线程安全、效率低。底层采用`Object[] elem
 JDK7中ArrayList实例化会先创建一个长度为10的空集合，在扩容时每次扩充原先的0.5倍，再将原有数组复制到新的数组中。
 JDK8中ArrayList实例化会创建一个长度为0的空集合，扩容时才会引入初始长度10，后面操作相同。
 
-建议采用带参构造，可指定容量
+建议采用带参构造，可指定容量（capacity）
 
 #### LinkedList
 
@@ -1550,9 +1550,11 @@ List subList(int fromIndex, int toIndex)//返回从fromIndex到toIndex位置的�
 **注意：集合中remove()方法重载为List（索引）和Iterator（对象）**
 
 **ArrayList / LinkedList / Vector的异同？**
-二者都线程不安全，相对线程安全的Vector，执行效率高。
-此外，ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。
-对于随机访问get和set，ArrayList觉得优于LinkedList，因为LinkedList要移动指针。对于新增和删除操作add(特指插入)和remove，LinkedList比较占优势，因为ArrayList要移动数据。ArrayList和Vector的区别Vector和ArrayList几乎是完全相同的,唯一的区别在于Vector是同步类(synchronized)，属于强同步类。因此开销就比ArrayList要大，访问要慢。正常情况下,大多数的Java程序员使用ArrayList而不是Vector,因为同步完全可以由程序员自己来控制。Vector每次扩容请求其大小的2倍空间，而ArrayList是1.5倍。Vector还有一个子类Stack。
+1.前二者都线程不安全，相对于线程安全的Vector执行效率更高。
+2.ArrayList是实现了基于动态数组的数据结构，LinkedList基于链表的数据结构。
+3.对于随机访问get和set，ArrayList优于LinkedList，因为LinkedList要移动指针。
+   对于新增和删除操作add(特指插入)和remove，LinkedList比较占优势，因为ArrayList要移动数据。
+4.Vector和ArrayList几乎是完全相同的,唯一的区别在于Vector是同步类(synchronized)，属于强同步类。因此开销就比ArrayList要大，访问要慢。正常情况下,大多数的Java程序员使用ArrayList而不是Vector,因为同步完全可以由程序员自己来控制。Vector每次扩容请求其大小的2倍空间，而ArrayList是1.5倍。
 
 ### Set接口
 
@@ -1562,7 +1564,9 @@ List subList(int fromIndex, int toIndex)//返回从fromIndex到toIndex位置的�
 无序是指存储的数据并不按照数组索引顺序添加，而是根据数据的哈希值排列
 不可重复是指需要保证在按照equals方法判断时不能返回true，即：相同元素不能重复
 
-### HashSet
+对于存放在Set容器中的对象，对应的类一定要重写 equals() 和 hashCode(Object  obj) 方法，以实现对象相等规则。即：“相等的对象必须具有相等的散列码”。
+
+#### HashSet
 
 Set接口的主要实现类。线程不安全、效率高。可以存储null值。
 
@@ -1574,15 +1578,125 @@ Set接口的主要实现类。线程不安全、效率高。可以存储null值�
 
 **对应的类一定要重写equals()和hashCode()方法，以实现对象相等规则。即：“相等的对象必须具有相等的散列码”。**
 
-### LinkedHashSet
+#### LinkedHashSet
 
 LinkedHashSet是HashSet子类。遍历其内部数据。
 
-### TreeSet
+根据元素的哈希值来决定元素的储存位置，同时还具有双向链表，所以遍历时看起来是按照顺序的，实际上仍是无序的。
 
-按照添加对象的指定顺序进行排序
+LinkedHashSet插入性能略低于HashSet，但在迭代访问 Set 里的全部元素时有很好的性能。
+
+#### TreeSet
+
+按照添加对象的指定顺序进行排序，采用红黑树的存储结构。
+
+存储数据类型必须一致，否则报异常：ClassCastException
 
 注意：
 
-1.TreeSet中添加对象需要添加相同类型的数据
-2.TreeSet中比较采用compareTo()方法
+1.TreeSet中添加对象需要添加**相同类型**的数据
+2.TreeSet中中对于**自定义对象**需要设置**比较器**（Comparable和Comparator）
+
+```txt
+Comparable	自然排序  对应Set无参（默认）
+	1.	继承接口
+	2.	重写compareTo(Object obj)方法
+		    先判断类型是否一致，再做返回值
+Comparator	定制排序  对应Set带参
+	1.	实例化Comparator对象
+	2.	重写compare(Object o1, Object o2)方法
+```
+
+### Map接口
+
+存储双列数据（key-value）对的数据，具有无序性
+
+特点：
+1.**使用一个键值对来存储key-value**，一个键值对是一个Entry对象。
+2.key	**无序的、不可重复的**，使用Set存储，key所在的类需要重写equals()和hashcode()
+3.value	**无序的、可重复的**，使用Collection存储，value所在类需要重写equals()
+4.Entry	无序的、不可重复的，使用Set存储
+
+#### HashMap
+
+**Map类的主要实现类**；线程不安全效率高；可存储null值的key-value；有子类LinkedHashMap
+
+底层：JDK7前	数组+链表
+		   JDK8后	数组+链表+红黑树
+
+LinkedHashMap	保证在遍历map元素时可以按照添加顺序实现遍历。因为其底层在HashMap基础上添加了一对指针，因此对于频繁的遍历操作此类效率明显高于HashMap
+
+**（面试题）底层实现原理**
+
+JDK7
+
+![image-20211126111846135](C:\Users\10627\AppData\Roaming\Typora\typora-user-images\image-20211126111846135.png)
+
+JDK8
+
+![image-20211126112004989](C:\Users\10627\AppData\Roaming\Typora\typora-user-images\image-20211126112004989.png)
+
+#### TreeMap
+
+保证按照添加的key-value对进行**有序排序**，实现排序遍历。此时考虑key的**自然排序或定制排序**。底层红黑树。
+
+#### Hashtable
+
+古老实现类；线程安全、效率低；不可存储null值的key-value；有子类Properties
+
+Properties	常用来处理配置文件。key-value都是String类型。
+
+#### 常用方法
+
+```java
+添加、删除、修改
+Object put(Object key,Object value)//将指定key-value添加到(或修改)当前map对象中
+void putAll(Map m)//将m中的所有key-value对存放到当前map中
+Object remove(Object key)//移除指定key的key-value对，并返回value
+void clear()//清空当前map中的所有数据
+元素查询
+Object get(Object key)//获取指定key对应的value
+boolean containsKey(Object key)//是否包含指定的key
+boolean containsValue(Object value)//否包含指定的value
+int size()//返回map中key-value对的个数
+boolean isEmpty()//判断当前map是否为空
+boolean equals(Object obj)//判断当前map和参数对象obj是否相等
+```
+
+**原视图操作**
+
+```java
+Set keySet()//返回所有key构成的Set集合
+Collection values()//返回所有value构成的Collection集合
+Set entrySet()//返回所有key-value对构成的Set集
+    Entry getKey()
+    Entry getValue()
+```
+
+## Collections工具类
+
+可操作Set、List、Map等集合
+
+**常用方法：**
+
+```java
+排序(均为static方法)：
+reverse(List)//反转List中元素的顺序
+shuffle(List)//对List集合元素进行随机排序
+sort(List)//根据元素的自然顺序对指定List集合元素按升序排序
+sort(List，Comparator)//根据指定的Comparator产生的顺序对 List 集合元素进行排序
+swap(List，int，int)//将指定list集合中的i处元素和j处元素进行交换
+
+查找、替换：
+Object max(Collection)//根据元素的自然顺序，返回给定集合中的最大元素
+Object max(Collection，Comparator)//根据 Comparator 指定的顺序，返回给定集合中的最大元素
+Object min(Collection)
+Object min(Collection，Comparator)
+int frequency(Collection，Object)//返回指定集合中指定元素的出现次数
+void copy(List dest,List src)//将src中的内容复制到dest中
+boolean replaceAll(List list，Object oldVal，Object newVal)//使用新值替换List对象的所有旧值
+    
+同步(static)：
+static Xxx synchronizedXxx(Xxx)//返回一个线程安全的集合
+```
+
