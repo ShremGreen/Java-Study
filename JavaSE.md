@@ -467,8 +467,6 @@ super代表父类存储空间的标识
 
 ### 内存空间分配
 
-![多态的内存空间分配](C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20211004113948244.png)
-
 过程：
 首先方法区依次加载所有类，随后静态main方法随之加载；
 随后栈中加载引用类型`Animal a`，并在堆中分配地址值和内存空间，栈中的引用类型通过地址值指向堆中`new Dog()`;
@@ -1562,7 +1560,7 @@ List subList(int fromIndex, int toIndex)//返回从fromIndex到toIndex位置的�
 
 其中：
 无序是指存储的数据并不按照数组索引顺序添加，而是根据数据的哈希值排列
-不可重复是指需要保证在按照equals方法判断时不能返回true，即：相同元素不能重复
+不可重复是指需要保证在按照equals()方法判断时不能返回true，即：相同元素不能重复
 
 对于存放在Set容器中的对象，对应的类一定要重写 equals() 和 hashCode(Object  obj) 方法，以实现对象相等规则。即：“相等的对象必须具有相等的散列码”。
 
@@ -1699,4 +1697,14 @@ boolean replaceAll(List list，Object oldVal，Object newVal)//使用新值替�
 同步(static)：
 static Xxx synchronizedXxx(Xxx)//返回一个线程安全的集合
 ```
+
+# 泛型
+
+在使用到数据之前先将需要传入的数据进行类型的约束，可在编译时规避集合中数据类型不匹配现象。
+
+JDK5.0前用Object，之后才引入泛型的概念
+
+## 自定义泛型
+
+### 泛型类、泛型接口
 
