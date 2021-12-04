@@ -402,7 +402,7 @@ final特点
 4.子类中所有构造方法默认都会访问父类的无参构造方法
 5.子类的每一个构造方法的第一条语句默认都是：`super();`
 
-Java在运行过程中，首先加载class，static静态随之加载；随后进行初始化，创建成员变量和成员方法以及构造方法的分配地址值和内存空间。
+Java在运行过程中，首先加载class，static静态随之加载；随后进行初始化，创建成员变量和成员方法以及构造方法的分配地址值和内存空间
 即：先加载类空壳，后初始化变量和方法
 
 **instanceof	测试它左边的对象是否是它右边的类的实例**
@@ -1476,7 +1476,7 @@ asList()
 
 **注意：**
 
-1.Collection接口继承了`java.lang.Iterable`接口，该接口有一个iterator()方法，那么所有实现了Collection接口的子类都有一个iterator()方法，用以返回一个实现了Iterator接口的对象。
+1.Collection接口继承了`java.lang.Iterable`接口，该接口有一个iterator()方法，那么所有实现了Collection接口的子类都有一个iterator()方法，用以返回一个实现了Iterator接口的对象
 2.Iterator不承载数据，只用来**遍历**集合的元素
 **使用：**`Iterator iterator = collection.iterator();`
 
@@ -1501,7 +1501,7 @@ for()循环的增强版，可用于遍历集合和数组
 
 **三个实现类：**
 ArrayList：主要实现类。**线程不安全、效率高**。底层采用`Object[] elementData`存储数据。
-LinkedList：用于频繁添加和删除操作。底层使用**双向链表**
+LinkedList：用于频繁添加和删除操作。底层使用**双向链表**。
 Vector：古老实现类。线程安全、效率低。底层采用`Object[] elementData`存储数据。
 
 #### ArrayList
@@ -1591,7 +1591,6 @@ LinkedHashSet插入性能略低于HashSet，但在迭代访问 Set 里的全部�
 存储数据类型必须一致，否则报异常：ClassCastException
 
 注意：
-
 1.TreeSet中添加对象需要添加**相同类型**的数据
 2.TreeSet中中对于**自定义对象**需要设置**比较器**（Comparable和Comparator）
 
@@ -1642,7 +1641,7 @@ JDK8
 
 古老实现类；线程安全、效率低；不可存储null值的key-value；有子类Properties
 
-Properties	常用来处理配置文件。key-value都是String类型。
+Properties	常用来处理配置文件。key-value都是String类型
 
 #### 常用方法
 
@@ -1708,3 +1707,32 @@ JDK5.0前用Object，之后才引入泛型的概念
 
 ### 泛型类、泛型接口
 
+泛型的声明
+`interface List<T>`
+
+`class GenTest<K,V>`
+
+泛型的实例化
+必须在类名后指明类型，相当于把“T”赋值，指定T代表的类型
+
+注意：
+1.指定泛型时不能使用基本数据类型，用包装类替代
+2.静态方法中不能使用类的泛型
+3.异常类不能是泛型的
+4.不能在try-catch中使用泛型
+
+### 泛型方法
+
+方法中出现了泛型的结构。
+
+注意：
+1.泛型方法所属的类是不是泛型类都没有关系
+2.泛型方法可以是静态的，因为泛型参数在调用方法时确定，并非在实例化类时确定。
+
+## 通配符
+
+类A是类B的父类，`G<A>`和`G<B>`是无关的，二者共同的父类是`G<?>`
+
+`?`	即通配符
+
+对于定义了通配符的对象不能继续添加数据（null除外）；可以读取其中数据，类型为Object
