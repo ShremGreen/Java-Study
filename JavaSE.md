@@ -1735,4 +1735,117 @@ JDK5.0前用Object，之后才引入泛型的概念
 
 `?`	即通配符
 
-对于定义了通配符的对象不能继续添加数据（null除外）；可以读取其中数据，类型为Object
+对于定义了通配符的对象不能继续添加数据（null除外）；可以读取其中数据，类型为Object。
+
+- 通配符指定上限 上限extends：使用时指定的类型必须是继承某个类，或者实现某个接口，即<=
+- 通配符指定下限 下限super：使用时指定的类型不能小于操作的类，即>=
+
+# IO流
+
+## File
+
+1.File类的一个对象代表一个文件或文件目录（文件夹）
+2.File类声明在java.io包下
+
+```java
+实例化方法：
+File file = File(String fiLePath);
+File file = FiLe(String parentPath,String childPath);
+File file = FiLe(File parentFiLe,String childPath);
+```
+
+```java
+File类的获取功能
+public String getAbsolutePath()//获取绝对路径
+public String getPath()//获取路径
+public String getName()//获取名称
+public String getParent()//获取上层文件目录路径。若无，返回null
+public long length()//获取文件长度（即：字节数）。不能获取目录的长度
+public long lastModified()//获取最后一次的修改时间，毫秒值
+public String[] list()//获取指定目录下的所有文件名称的String数组
+public File[] listFiles()//获取指定目录下的所有文件的File数组
+```
+
+```java
+File类的重命名功能
+public boolean renameTo(File dest)//把文件重命名为指定的文件路径
+```
+
+```java
+File类的判断功能
+public boolean isDirectory()//判断是否是文件目录
+public boolean isFile()//判断是否是文件
+public boolean exists()//判断是否存在
+public boolean canRead()//判断是否可读
+public boolean canWrite()//判断是否可写
+public boolean isHidden()//判断是否隐藏
+```
+
+```java
+File类的创建功能
+public boolean createNewFile()//创建文件。若文件存在，则不创建，返回false
+public boolean mkdir()//创建文件目录。如果此文件目录存在，就不创建了；如果此文件目录的上层目录不存在，也不创建。
+public boolean mkdirs()//创建文件目录。如果上层文件目录不存在，一并创建
+```
+
+**创建注意事项：**
+如果你创建文件或者文件目录没有写盘符路径，那么，默认在项目路径下
+
+```java
+File类的删除功能
+public boolean delete()//删除文件或者文件夹
+```
+
+**删除注意事项：**
+Java中的删除不走回收站。
+要删除一个文件目录，请注意该文件目录内不能包含文件或者文件目录
+
+## IO
+
+- input：读取外部数据到程序(内存)中
+- output：将内存数据输出到存储设备中
+
+按数据单位分为：字节流(8 bit)，字符流(16 bit)
+按数据流向分为：输入流和输出流
+按流的角色分为：节点流和处理流
+
+| 抽象基类 | 字符流       | 字节流 |
+| -------- | ------------ | ------ |
+| 输入流   | InputStream  | Reader |
+| 输出流   | OutputStream | Writer |
+
+### 节点流(文件流)
+FileInputStream
+FileOutputStream
+FileReader
+FileWriter
+
+#### read
+
+从硬盘文件中读入数据到内存
+
+过程：
+1.实例化File并实例化FileReader
+2.调用read()方法，并遍历其中数据
+3.关闭流
+4.异常处理，try-catch-finally、try-catch
+
+**注意：**
+**如果IO流中间的过程出现异常会导致不能正常关闭流(信息泄露)，需要通过try-catch-finally进行处理。不能用throws**
+
+```java
+public int read()//返回读入的字符，如果到达文件末尾返回-1    可自动迭代
+public int read(char[] c)//每次读入一定长度的字符串，返回长度
+```
+
+#### write
+
+从内存中写出数据到硬盘文件里
+
+```java
+FileWriter(File file)
+       //如果存在文件,覆盖该文件
+FileWriter(File file, boolean append)
+       //append = true  继续写出
+       //append = false 覆盖文件
+```
