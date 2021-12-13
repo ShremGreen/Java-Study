@@ -1805,9 +1805,9 @@ Java中的删除不走回收站。
 - input：读取外部数据到程序(内存)中
 - output：将内存数据输出到存储设备中
 
-按数据单位分为：字节流(8 bit)，字符流(16 bit)
-按数据流向分为：输入流和输出流
-按流的角色分为：节点流和处理流
+**按数据单位分为：字节流(8 bit)，字符流(16 bit)**
+**按数据流向分为：输入流和输出流**
+**按流的角色分为：节点流和处理流**
 
 | 抽象基类 | 字节流       | 字符流 |
 | -------- | ------------ | ------ |
@@ -1829,7 +1829,7 @@ FileWriter
 2.实例化FileReader
 3.调用read()等方法，并遍历其中数据
 4.关闭流
-5.异常处理，try-catch-finally、try-catch
+5.异常处理try-catch-finally、try-catch
 
 **注意：**
 **如果IO流中间的过程出现异常会导致不能正常关闭流(信息泄露)，需要通过try-catch-finally进行处理。不能用throws**
@@ -1879,7 +1879,7 @@ while((num = fr.read(cbuf)) != -1) {
 1.对于文本文件(.txt,.java,.c,.cpp)，使用字符流处理
 2.对于非文本文件，使用字节流来处理
 
-### 缓冲流
+### 缓冲流（处理流）
 
 BufferedInputStream（字节）
 BufferedOutputStream
@@ -1895,11 +1895,14 @@ BufferedWriter
 4.遍历	read()	write()
 5.关闭流
 
+过程：
+缓冲流读取数据时，8Kb的数据先进入缓冲区，缓冲区满后BufferedOutputStream才会把缓冲区中数据一次性写入文件中，而使用flush()可以强制将缓冲区的内容全部写入输出流。
+
 注意：
 1.使用时会创建一个内部缓冲区数组，缺省使用8Kb的缓冲区。
 2.在关闭流时，应先关闭外部流，再关闭内部流。而关闭外层流的同时系统会自动关闭内层的流，因此只需要关闭外部的处理流
 
-### 转换流
+### 转换流（处理流）
 
 **InputStreamReader:将一个字节输入流转换为字符输入流**
 **OutputStreamwriter:将一个字符输出流转换为字节输出流**
@@ -1908,3 +1911,70 @@ BufferedWriter
 
 编码：字符到字节
 解码：字节到字符
+
+转换流的编码应用
+1.可以将字符按指定编码格式存储
+2.可以对文本数据按指定编码格式来解读
+3.指定编码表的动作由构造器完成
+
+**注意：**
+**在转换流实例化时需要确定字符集类型，尤其是读入时要和源文件字符集一致**
+
+#### 字符集
+
+计算机只能识别二进制数据，早期是电信号。
+
+ASCII：美国标准信息交换码，用一个字节的7位表示
+ISO8859-1：拉丁码表。欧洲码表用一个字节的8位表示。
+GB2312：中文编码表。最多两个字节编码所有字符
+GBK：中文编码表，融合了更多的中文符号。最多两个字节编码
+Unicode：国际标准码，融合了目前所有字符。每个字符有唯一字符码。所有的文字都用两个字节来表示。
+UTF-8：变长的编码方式，可用1-4个字节来表示一个字符。
+
+### 标准输入输出流*
+
+`System.in`和`System.out`分别代表了系统的输入和输出设备，默认输入设备是键盘，输出设备是显示器。
+
+`System.in`输入流的类型是`InputStream`（字节）
+`System.out`输出流的类型是`PrintStream`（字节）其是`OutputStream`的子类
+
+```java
+重定向：改变默认设备
+public static void setIn(InputStream in)
+public static void setOut(PrintStream out)
+```
+
+### 打印流*
+
+将基本数据类型的数据格式转化为字符串输出
+
+`PrintStream`和`PrintWriter`
+1.通过一系列print()和println()方法，实现输出多种数据
+2.不会抛IOException
+3.自动flush()
+4.System.out返回的是PrintStream实例
+5.PrintStream打印的字符会通过编码转化为字节；PrintWriter打印字符
+
+### 数据流*
+
+DataInputStream
+DataOutputStream
+分别“套接”在InputStream和OutputStream子类的流上
+
+作用：用于读取和写出基本数据类型、字符串的数据
+
+```java
+常用方法：
+boolean readBoolean() 	byte readByte()
+char readChar() 		float readFloat()
+double readDouble() 	short readShort()
+long readLong() 		int readInt()
+String readUTF() 		void readFully(byte[] b)
+```
+
+### 对象流
+
+ObjectInputStream
+ObjectOutputStream
+
+用于存取基本数据类型和对象的处理流。它可以把Java对象写入到数据源中，再从中还原出来
