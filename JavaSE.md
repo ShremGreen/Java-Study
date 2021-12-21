@@ -388,6 +388,8 @@ final特点
 静态代码块  优先于  构造代码块  优先于  局部代码块
 构造代码块优先于构造方法
 
+代码块和属性赋值属于同一优先级，读取时看顺序
+
 ## 继承（extends）
 
 父类（基类/超类）	子类（派生类）
@@ -1742,6 +1744,8 @@ JDK5.0前用Object，之后才引入泛型的概念
 
 # IO流
 
+![image-20211215090444533](C:\Users\10627\AppData\Roaming\Typora\typora-user-images\image-20211215090444533.png)
+
 ## File
 
 1.File类的一个对象代表一个文件或文件目录（文件夹）
@@ -1814,7 +1818,35 @@ Java中的删除不走回收站。
 | 输入流   | InputStream  | Reader |
 | 输出流   | OutputStream | Writer |
 
+### 抽象基类
+
+InputStream
+OutputStream
+Reader
+Writer
+
+```java
+int read()
+int read(byte[] b)
+int read(byte[] b, int off, int len)
+int read(char[] c)//返回读入的字符，如果到达文件末尾返回-1    可自动迭代
+int read(char[] c, int off, int len)//每次读入一定长度的字符串，返回长度
+    
+void write(int b/int c)
+void write(byte[] b/char[] cbuf)
+void write(byte[] b/char[] buff, int off, int len)
+void flush()//强制写出缓冲的字节
+void close()//需要先刷新，再关闭此流
+```
+
+由于通过程序打开的IO流资源不属于内存资源，因而垃圾回收器无法回收，所以应该显式关闭(close)该资源
+
+总结：
+1.对于文本文件(.txt,.java,.c,.cpp)，使用字符流处理
+2.对于非文本文件，使用字节流来处理
+
 ### 节点流(文件流)
+
 FileInputStream
 FileOutputStream
 FileReader
@@ -1833,11 +1865,6 @@ FileWriter
 
 **注意：**
 **如果IO流中间的过程出现异常会导致不能正常关闭流(信息泄露)，需要通过try-catch-finally进行处理。不能用throws**
-
-```java
-public int read()//返回读入的字符，如果到达文件末尾返回-1    可自动迭代
-public int read(char[] c)//每次读入一定长度的字符串，返回长度
-```
 
 ```java
 FileWriter(File file)
@@ -1870,14 +1897,6 @@ while((num = fr.read(cbuf)) != -1) {
     System.out.print(str);//lrcJava123456
 }
 ```
-
-#### InputStream & OutputStream
-
-操作同字符流的read & write
-
-总结：
-1.对于文本文件(.txt,.java,.c,.cpp)，使用字符流处理
-2.对于非文本文件，使用字节流来处理
 
 ### 缓冲流（处理流）
 
@@ -1919,17 +1938,6 @@ BufferedWriter
 
 **注意：**
 **在转换流实例化时需要确定字符集类型，尤其是读入时要和源文件字符集一致**
-
-#### 字符集
-
-计算机只能识别二进制数据，早期是电信号。
-
-ASCII：美国标准信息交换码，用一个字节的7位表示
-ISO8859-1：拉丁码表。欧洲码表用一个字节的8位表示。
-GB2312：中文编码表。最多两个字节编码所有字符
-GBK：中文编码表，融合了更多的中文符号。最多两个字节编码
-Unicode：国际标准码，融合了目前所有字符。每个字符有唯一字符码。所有的文字都用两个字节来表示。
-UTF-8：变长的编码方式，可用1-4个字节来表示一个字符。
 
 ### 标准输入输出流*
 
@@ -1978,3 +1986,205 @@ ObjectInputStream
 ObjectOutputStream
 
 用于存取基本数据类型和对象的处理流。它可以把Java对象写入到数据源中，再从中还原出来
+
+### 随机存取文件流*
+
+RandomAccessFile 声明在java.io包下，但直接继承于java.lang.Object类。
+实现了DataInput、DataOutput两个接口，此类可读可写。
+
+RandomAccessFile对象包含一个记录指针，用于标记当前读写处的位置，
+
+```java
+常用方法
+long getFilePointer()//获取文件记录指针的当前位置
+void seek(long pos)//将文件记录指针定位到pos位置
+```
+
+实际上，可以用RandomAccessFile类实现多线程下载。在下载时会创建两个文件，其一用于开辟文件空间并存储文件，其二用于记录当前的指针对应的下载位置或多个线程对应的位置以实现断点下载或上传
+
+### 字符集
+
+计算机只能识别二进制数据，早期是电信号。
+
+ASCII：美国标准信息交换码，用一个字节的7位表示
+ISO8859-1：拉丁码表。欧洲码表用一个字节的8位表示。
+GB2312：中文编码表。最多两个字节编码所有字符
+GBK：中文编码表，融合了更多的中文符号。最多两个字节编码
+Unicode：国际标准码，融合了目前所有字符。每个字符有唯一字符码。所有的文字都用两个字节来表示。
+UTF-8：变长的编码方式，可用1-4个字节来表示一个字符。
+
+### 序列化
+
+**对象流中需要序列化和反序列化**
+**序列化：用ObjectOutputStream类保存基本类型数据或对象的机制**
+**反序列化：用ObjectInputStream类读取基本类型数据或对象的机制**
+
+**对象的序列化的条件**
+1.对象的属性必须是可序列化的，可序列化要求该类**实现Serializable接口**
+2.实现Serializable接口的类都有一个表示**序列化版本号**的静态变量：`private static final long serialVersionUID`
+
+注意：
+对象的序列化通过该类实现Serializable接口，而序列化的机制时通过判断serialVersionUID来验证版本一致性的。若没有序列号，那么当该对象发生改变时，结果并不会发生改变
+
+# 网络编程
+
+计算机之间的信息互传、数据共享
+
+## IP
+
+唯一的标识Internet上的计算机
+
+### IP地址分类
+
+1. **IPV4和IPV6**
+   IPV4	4个字节，即4个0-255。如192.168.0.1	
+   IPV6	16个字节，即128位。如3ffe:3201:1401:1280:c8ff:fe4d:db39:1984
+
+2. **公网地址(万维网)和私有地址(局域网)**
+   192.168. 开头的就是私有址址，范围即为192.168.0.0--192.168.255.255，专门为组织机构内部使用
+
+本地回环地址(hostAddress)：127.0.0.1
+主机名(hostName)：localhost
+
+### InetAddress类
+
+InetAddress类表示IP地址，**无构造方法**，有两个子类Inet4Address、Inet6Address
+
+域名通过DNS（域名解析服务器）转化为IP地址
+
+```java
+获取InetAddress实例的静态方法
+public static InetAddress getLocalHost()
+public static InetAddress getByName(String host)
+常用方法：
+public String getHostAddress()//返回 IP 地址字符串（以文本表现形式）。
+public String getHostName()//获取此 IP 地址的主机名
+public boolean isReachable(int timeout)//测试是否可以达到该地址
+```
+
+## 端口号
+
+端口号标识正在计算机上运行的进程（程序）不同的进程有不同的端口号，规定端口号为一个 16 位的整数 0~65535。
+
+端口分类：
+公认端口：0~1023。被预先定义的服务通信占用（如：HTTP占用端口 80，FTP占用端口21，Telnet占用端口23）
+注册端口：1024~49151。分配给用户进程或应用程序。（如：Tomcat占用端口8080，MySQL占用端口3306，Oracle占用端口1521等）
+动态/私有端口：49152~65535
+
+## Socket
+
+利用套接字（Socket）开发网络应用程序早已作为广泛的标准
+
+特点：
+1.**端口号和IP地址组合出一个唯一能识别的网络套接字：Socket**
+2.通信的两端都要有Socket，是两台机器间通信的端点(客户端和服务端)
+3.网络通讯实际上就是Socket间的通讯
+
+```java
+常用构造器：
+public Socket(InetAddress address,int port)//创建一个流套接字并将其连接到指定 IP 地址的指定端口号。
+public Socket(String host,int port)//创建一个流套接字并将其连接到指定主机上的指定端口号。
+常用方法：
+public InputStream getInputStream()//返回此套接字的输入流。可以用于接收网络消息
+public OutputStream getOutputStream()//返回此套接字的输出流。可以用于发送网络消息
+public InetAddress getInetAddress()//此套接字连接到的远程IP地址；如果套接字是未连接的，则返回null。
+public InetAddress getLocalAddress()//获取套接字绑定的本地地址。即本端的IP地址
+public int getPort()//此套接字连接到的远程端口号；如果尚未连接套接字，则返回 0。
+public int getLocalPort()//返回此套接字绑定到的本地端口。如果尚未绑定套接字，则返回-1。即本端的端口号。
+```
+
+## 网络协议
+
+传输控制协议		TCP	(Transmission Control Protocol)
+用户数据报协议	UDP	(User Datagram Protocol)
+
+TCP/IP协议形成的四层体系结构，即**物理链路层、IP层、传输层和应用层**
+
+**TCP协议特点**
+1.使用TCP协议前，须**先建立TCP连接**，形成传输数据通道
+2.传输前，**采用“三次握手”方式**，点对点通信，是**可靠**的
+3.TCP协议进行通信的**两个应用进程：客户端、服务端**。
+4.在连接中可进行**大数据量的传输**
+5.传输完毕，**需释放已建立的连接**，**效率低**
+
+**UDP协议特点**
+1.将数据、源、目的封装成数据包，**不需要建立连接**
+2.每个数据报的**大小限制在64K内**
+3.发送不管对方是否准备好，接收方收到也不确认，故是**不可靠**的
+4.可以广播发送
+5.发送数据结束时**无需释放资源，开销小，速度快**
+
+### 基于Socket的TCP编程
+
+基于套接字Socket编程分为服务器端和客户端
+
+客户端Socket建立步骤：
+1.**实例化，创建Socket对象**：若服务器端响应，则建立客户端到服务器端的通信线路。若没有响应（连接失败），会出现异常
+2.**实例化，创建连接到Socket的IO流对象**：
+3.读入写出操作
+4.关闭流：断开客户端和服务器的连接
+
+服务器端Socket建立步骤：
+1.**ServerSocket(int port)**：创建一个服务器端套接字，监听客户端请求
+2.**accept()**：监听连接请求，返回套接字
+3.**调用Socket类的IO流**
+4.读入写出操作
+5.关闭流
+
+### UDP网络编程
+
+```txt
+流程：
+1. DatagramSocket与DatagramPacket
+2. 建立发送端，接收端
+3. 建立数据包
+4. 调用Socket的发送、接收方法
+5. 关闭Socket
+```
+
+### URL
+
+统一资源定位符，表示Internet上某一资源的地址
+
+**URL的基本结构由5部分组成：**
+**<传输协议>://<主机名>:<端口号>/<文件名>#片段名?参数列表**
+例如:  `http://192.168.1.100:8080/helloworld/index.jsp#a?username=shkstart&password=123`
+
+# 反射
+
+反射Reflection是被视为**动态语言**的关键，反射机制允许程序在执行期间取得任何类的内部信息，并且可以直接操作任意对象的内部属性和方法。
+
+**动态语言：运行时代码可以根据某些条件改变自身结构**
+静态语言：运行时结构不可变
+
+反射相关的主要API
+java.lang.class	代表一个类
+java.lang.reflect.Method	代表类的方法
+java.lang.reflect.Field	代表类的成员方法
+java.lang.reflect.Constructor	代表类的构造方法
+
+**问题1	反射和面向对象中的封装性是否冲突？**
+对属性和方法进行封装是表示建议，如public 修饰的属性建议直接调用而peivate所修饰的属性和方法不被建议直接使用，但是也可以使用，而使用的方法就是反射。
+
+**问题2	通过直接实例化和反射都可以调用public的结构，开发中怎么选择？**
+一般用直接实例化（new），在需要动态语言操作运行中的程序时用反射。
+例如：在某些网页，后台服务器已经启动，网页上需要判断登录和注册，此时就需要用到反射，通过用户的选择调用不同的选择。
+
+## Class类
+
+java.lang.Class
+
+**类的加载过程：**程序经过javac.exe命令以后，会生成字节码文件(.class)。接着将某个字节码文件加载到内存中，此过程是类的加载。加载到内存中的类成为运行时类，此运行时类作为Class的一个实例
+
+**即：Class实例对应一个运行时类**
+
+加载到内存中的运行时类会缓存一定时间，在此时间段内，可通过一些方法获取此运行时类
+
+**class、interface、[]、enum、annotation、prinitive type、void等都可以作为Class实例化对象**
+
+**Class实例化**
+1.调用运行时类的属性   .class
+2.调用运行时类的对象   getClass()
+3.调用Class类的静态方法   forName()	最常用
+*4.使用类的加载器     ClassLoader
+
