@@ -290,3 +290,57 @@ FROM employees e RIGHT JOIN departments d
 ON e.department_id = d.department_id;# 122行 空员工的部门
 ```
 
+注意：SQL92不能实现外连接，SQL99可以实现内外连接，但是不能实现满外连接
+
+## SQL99	多表查询
+
+基本语法： **JOIN ON **  结构
+JOIN+表，ON+连接条件
+
+```sql
+# 标准语言结构
+SELECT table1.column, table2.column,table3.column
+FROM table1
+    JOIN table2 ON table1 和 table2 的连接条件
+        JOIN table3 ON table2 和 table3 的连接条件
+```
+
+### 七种 SQL JOINS✨
+
+![1554979255233](E:\MyCodes\github\javaSE\pic_notes\1554979255233.png)
+
+#### UNION 和 UNION ALL
+
+语法格式（即连接SELECT语句）：
+
+```sql
+SELECT column,... FROM table1
+UNION [ALL]
+SELECT column,... FROM table2
+```
+
+UNION	并集，会执行去重操作，效率低
+UNION ALL	并集，不会执行去重操作，效率高
+一般使用后者UNION ALL
+
+例子：
+
+```sql
+# 查询哪些部门没有员工
+# 右外连接
+SELECT d.department_id,d.department_name,e.employee_id
+FROM employees e RIGHT OUTER JOIN departments d
+ON e.department_id = d.department_id
+WHERE e.employee_id IS NULL;
+# 左外连接
+SELECT d.department_id,e.department_id,d.department_name,e.employee_id
+FROM departments d LEFT JOIN employees e
+ON e.department_id = d.department_id
+WHERE e.department_id IS NULL
+
+# 说明：e.department_id和e.employee_id都可作为最后的判断条件。
+# 因为外连接后新增的16条数据的e.department_id和e.employee_id都为null
+```
+
+需注意：连接条件e.department_id = d.department_id并不是将两边合并，结果表中同时存在e.department_id 和 d.department_id，只是前者新增了16行空值(e.employee_id同样)
+
