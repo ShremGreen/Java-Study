@@ -102,12 +102,16 @@ FROM employees
 WHERE department_id = 90;#过滤条件
 ```
 
+**CASE WHEN**
+
+CASE WHEN THEN ELSE END
+
 # 运算符
 
 除法	/或DIV
 取余	%或MOD
 
-**1.在SQL中，字符串存在隐式转换，如果转换不成功，则为0。如`0 = 'a'`**
+**1.在SQL中，字符串存在隐式转换（字符串尝试转化为数字），如果转换不成功，则为0。如`0 = 'a'`**
 **2.运算中存在null时，大多数情况下结果为null（除了安全等于）**
 
 ```sql
@@ -120,7 +124,7 @@ FROM DUAL;
 
 特殊：
 1.**安全等于	<=>**	可以判断null
-2.**不等于**	**!=或<>**
+2.**不等于**	**!= 或 <>**
 
 在SQL中，+表示加法，不区分数据类型，会将字符串转化为数值（隐式转换）
 
@@ -139,7 +143,7 @@ FROM DUAL;
 
 - **IN \ NOT IN  判断离散值**
 
-- **LIKE  模糊查询**
+- **LIKE  模糊查询（筛选）**
 
 **另外：**
 **%	代表不确定个数的字符**
@@ -164,7 +168,7 @@ WHERE last_name LIKE '___\_o%';
 
 # 排序和分页
 
-## 排序
+## ORDER BY
 
 **关键字	ORDER BY	默认升序**
 
@@ -178,7 +182,7 @@ FROM employees
 ORDER BY department_id DESC,salary ASC;
 ```
 
-##  分页
+##  LIMIT
 
 如果查询结果返回的记录太多，采用分页的方式，每次只返回特定页数的数据。
 
@@ -186,7 +190,7 @@ ORDER BY department_id DESC,salary ASC;
 格式：`LIMIT 位置偏移量, 条目数`
 
 **注意：**
-**1.位置偏移量-1 表示真实位置**
+**1.位置偏移量 -1 表示真实位置**
 **2.LIMIT子句必须放在SELECT语句的最后**
 
 ```sql
@@ -212,7 +216,7 @@ SELECT employee_id,department_name
 FROM employees,departments;# 查询出2889条数据 107*27
 ```
 
-原因：出现了笛卡尔积的错误，即两个表的每个数据都进行了一次匹配,类似于坐标
+原因：出现了**笛卡尔积**的错误，即两个表的每个数据都进行了一次匹配,类似于坐标
 
 **正确方法**    添加**连接条件**
 
@@ -232,7 +236,7 @@ WHERE T1.department_id = T2.department_id;
 # 按不同工资等级获取员工信息并升序排列
 SELECT e.last_name,e.salary,j.grade_level
 FROM employees e, job_grades j
-WHERE e.salary BETWEEN j.lowest_sal AND highest_sal
+WHERE e.salary BETWEEN j.lowest_sal AND j.highest_sal
 ORDER BY grade_level ASC; 
 ```
 
@@ -344,3 +348,141 @@ WHERE e.department_id IS NULL
 
 需注意：连接条件e.department_id = d.department_id并不是将两边合并，结果表中同时存在e.department_id 和 d.department_id，只是前者新增了16行空值(e.employee_id同样)
 
+# 聚合函数
+
+**注意：MySQL中聚合函数不能嵌套**
+
+**AVG()** 均值
+
+**SUM()** 求和
+
+**MAX()**	 **MIN()**  极值
+
+## COUNT
+
+统计表中的记录数，一般使用`COUNT(*)`
+
+## GROUP BY
+
+将表中数据分成若干组
+
+```sql
+# 查询不同部门下的平均工资
+SELECT department_id,AVG(salary)
+FROM employees
+GROUP BY department_id;
+```
+
+```sql
+# 错误的,因为工种和部门不是唯一对应的，而结果仅显示一个工种
+SELECT department_id,job_id,AVG(salary)
+FROM employees
+GROUP BY department_id;
+```
+
+**结论：**
+**1.SELECT中出现的非组函数字段必须声明在GROUP BY中，而GROUP BY中声明的字段可以不出现在SELECT中**
+**2.GROUP BY声明在FROM、WHERE后面，ORDER BY、LIMIT前面**
+
+## HAVING
+
+过滤分组
+
+```sql
+SELECT   department_id, MAX(salary)
+FROM     employees
+GROUP BY department_id
+HAVING   MAX(salary)>10000;
+```
+
+**注意：**
+1.HAVING使用的基础是GROUP BY，必须在分组的基础上进行过滤
+2.聚合函数只能在HAVING中声明，WHERE中不能使用聚合函数
+3.HAVING声明在GROUP BY后
+
+**WHERE和HAVING的对比：**
+1.WHERE可以直接使用表中的字段作为筛选条件，但不能使用与分组结果相关的函数作为筛选条件；HAVING则必须与GROUP BY配合使用，可以使用分组相关的函数或字段作为筛选条件。
+2.对于数据的处理，WHERE是先筛选后连接，效率高；HAVING是先连接后筛选，效率低。
+
+原因：WHERE 在 GROUP BY 之前，所以无法对分组结果进行筛选。HAVING 在 GROUP BY 之后，在需要对数据进行分组统计的时候，HAVING 可以完成 WHERE 不能完成的任务（可以使用分组字段和分组中的计算函数）。
+
+**开发中的选择：**
+
+1.可以同时使用WHERE和HAVING
+2.过滤条件中无聚合函数时，使用WHERE，有聚合函数时，聚合函数必须使用HAVING修饰
+
+## SELECT执行过程
+
+### SQL92 & 99 结构
+
+```sql
+#SQL92：
+SELECT ...,....,...
+FROM ...,...,....
+WHERE 多表的连接条件
+AND 不包含组函数的过滤条件
+GROUP BY ...,...
+HAVING 包含组函数的过滤条件
+ORDER BY ... ASC/DESC
+LIMIT ...,...
+
+#SQL99：
+SELECT ...,....,...
+FROM ... JOIN ... 
+ON 多表的连接条件
+JOIN ...
+ON ...
+WHERE 不包含组函数的过滤条件
+AND/OR 不包含组函数的过滤条件
+GROUP BY ...,...
+HAVING 包含组函数的过滤条件
+ORDER BY ... ASC/DESC
+LIMIT ...,...
+```
+
+### 执行顺序
+
+FROM -> WHERE -> GROUP BY -> HAVING -> SELECT 的字段 -> DISTINCT -> ORDER BY -> LIMIT
+
+**举例：**
+
+```sql
+SELECT DISTINCT player_id, player_name, count(*) as num # 顺序 5
+FROM player JOIN team ON player.team_id = team.team_id # 顺序 1
+WHERE height > 1.80 # 顺序 2
+GROUP BY player.team_id # 顺序 3
+HAVING num > 2 # 顺序 4
+ORDER BY num DESC # 顺序 6
+LIMIT 2 # 顺序 7
+```
+
+在SELECT语句执行过程中，每个步骤都会产生一个隐含的**虚拟表**，然后将这个虚拟表传入下一个步骤中作为输入。
+
+# 子查询
+
+即 嵌套查询
+
+子查询（内查询）在主查询（外查询）之前执行一次
+
+```sql
+# 查询比Abel工资高的员工
+SELECT last_name,salary
+FROM employees
+WHERE salary > (
+		SELECT salary
+		FROM employees
+		WHERE last_name = 'Abel'
+		);
+```
+
+## 子查询分类
+
+1.单行子查询、多行子查询
+		查询结果返回一条还是多条记录
+2.关联子查询、非关联子查询
+
+## 单行子查询
+
+
+
+## 多行子查询
