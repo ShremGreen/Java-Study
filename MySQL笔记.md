@@ -11,9 +11,9 @@
 
 **SQL语言在功能上分为三类：**
 
-- DDL（Data Definition Languages  数据定义语言），这些语句定义了不同的数据库、表、视图、索引等数据库对象，还可以创建、删除、修改数据库和数据表的结构。 关键字包括 **CREATE、DROP、ALTER**等。
-- DML（Data Manipulation Language  数据操作语言），增删改查。 关键字包括 **INSERT、DELETE、UPDATE、SELECT**等。
-- DCL（Data Control Language、数据控制语言）定义数据库、表、字段、用户的访问权限和安全级别。关键字包括 **GRANT、REVOKE、COMMIT、ROLLBACK、SAVEPOINT**等。
+- DDL（Data Definition Languages  数据定义语言） **CREATE、DROP、ALTER、RENAME、RUNCATE**
+- DML（Data Manipulation Language  数据操作语言） **INSERT、DELETE、UPDATE、SELECT**等。
+- DCL（Data Control Language  数据控制语言） **GRANT、REVOKE、COMMIT、ROLLBACK、SAVEPOINT**
 
 # 基本SELECT语句
 
@@ -386,7 +386,7 @@ GROUP BY department_id;
 
 ## HAVING
 
-过滤分组
+在分组的基础上进行过滤
 
 ```sql
 SELECT   department_id, MAX(salary)
@@ -396,7 +396,7 @@ HAVING   MAX(salary)>10000;
 ```
 
 **注意：**
-1.HAVING使用的基础是GROUP BY，必须在分组的基础上进行过滤
+1.**HAVING使用的基础是GROUP BY**，必须在分组的基础上进行过滤
 2.聚合函数只能在HAVING中声明，WHERE中不能使用聚合函数
 3.HAVING声明在GROUP BY后
 
@@ -477,12 +477,181 @@ WHERE salary > (
 
 ## 子查询分类
 
-1.单行子查询、多行子查询
-		查询结果返回一条还是多条记录
-2.关联子查询、非关联子查询
+1.**单行子查询、多行子查询**
+区分：查询结果返回一条还是多条记录
+2.**关联子查询、非关联子查询**
 
-## 单行子查询
+```sql
+# 显式员工的employee_id,last_name和location。其中，若员工department_id与location_id为1800的department_id相同，则location为’Canada’，其余则为’USA’
 
+SELECT employee_id,last_name,CASE department_id WHEN (
+							SELECT department_id
+							FROM departments
+							WHERE location_id = 1800
+							) THEN 'Canada'
+							ELSE 'USA' END 'location'
+FROM employees
+```
 
+注意：
+在SELECT中，除了在`group by`和`limit`之外，其他位置都可以声明子查询
 
-## 多行子查询
+## 子查询操作符
+
+`IN`	等于列表中任意一个
+
+`ANY`	和单行比较操作符一起使用，比较子查询返回的某一个值
+
+`ALL`	和单行比较操作符一起使用，比较子查询返回的所有值
+
+## EXISTS
+
+`EXIST`和`NOT EXIST`
+
+检查子查询中是否存在满足条件的行并返回true或false
+
+# 创建和管理表
+
+从系统架构来看，MySql数据库系统从大到小依次是`数据库服务器`、`数据库`、`数据表`、`数据表中行与列`
+
+## 创建数据库
+
+```sql
+数据库创建方式
+#方式1：创建数据库
+CREATE DATABASE 数据库名;
+#方式2：创建数据库并指定字符集
+CREATE DATABASE 数据库名 CHARACTER SET 字符集;
+#方式3：判断数据库是否已经存在，不存在则创建数据库（推荐）
+CREATE DATABASE IF NOT EXISTS 数据库名;
+```
+
+注意：
+DATABASE 不能改名。一些可视化工具可以改名，它是建新库，把所有表复制到新库，再删旧库完成的。
+
+## 使用数据库
+
+```sql
+# 查看当前所有的数据库
+SHOW DATABASES# 有一个s，代表多个数据库
+
+# 查看当前正在使用的数据库
+SELECT DATABASE()# 使用的MySql中一个的全局变量
+
+# 查看指定库下所有的表
+SHOW TABLES FROM 数据库名
+
+# 查看数据库的创建信息
+SHOW CREATE DATABASE 数据库名
+SHOW CREATE DATABASE 数据库名\G
+
+# 使用/切换数据库
+USE 数据库名
+```
+
+## 修改数据库
+
+```sql
+# 更改数据库字符集
+ALTER DATABASE 数据库名 CHARACTER SET 字符集
+```
+
+## 删除数据库
+
+```sql
+# 删除指定数据库
+DROP DATABASE 数据库名
+DROP DATABASE IF EXISTS 数据库名（推荐）
+```
+
+## 创建表
+
+前提：
+必须有CREATE TABLE权限
+
+**方式一  直接创建**
+
+```sql
+CREATE TABLE [IF NOT EXISTS] 表名(
+字段1, 数据类型 [约束条件] [默认值],
+字段2, 数据类型 [约束条件] [默认值],
+字段3, 数据类型 [约束条件] [默认值],
+……
+[表约束条件]
+);
+```
+
+注意：
+1.加上了IF NOT EXISTS，则表示：如果当前数据库中不存在该表则创建数据表，如果存在则不创建数据表
+2.创建时，必须指明：表名、列名、数据类型、长度
+
+**方式二  根据现有的表创建**
+
+```sql
+# 例：复制employees表，包括数据
+CREATE TABLE employees_copy
+AS
+SELECT *
+FROM employees;
+```
+
+## 修改表
+
+在表中 `增删改查` 字段
+
+```sql
+ALTER TABLE myemp2
+ADD salary DOUBLE(10,2);# 默认添加在末尾（小数点前8位，后2位）
+DESC myemp2;
+
+# 修改一个字段：数据类型、长度、默认值
+ALTER TABLE myemp2
+MODIFY last_name VARCHAR(25) DEFAULT 'Aa';# 更改字符串长度和默认值
+
+# 重命名一个字段
+ALTER TABLE myemp2
+CHANGE salary monthly_salary DOUBLE(10,2);
+
+ALTER TABLE myemp2
+CHANGE email e_number VARCHAR(50);
+
+# 删除一个字段
+ALTER TABLE myemp2
+DROP COLUMN e_number;
+
+# 重命名表
+RENAME TABLE myemp2
+TO myemp3;
+```
+
+## 删除表
+
+```sql
+# 删除表
+DROP TABLE IF EXISTS myemp2
+
+# 清空表
+TRUNCATE TABLE employees_copy;
+```
+
+**TRUNCATE TABLE和DELETE FROM区别**
+
+相同点:
+都可以实现对表中所有数据的删除，同时保留表结构。
+
+不同点:
+TRUNCATE TABLE:一旦执行此操作，表数据全部清除。同时，数据是不可以回滚的。
+DELETE FROM:一旦执行此操作，表数据可以全部清除（不带WHERE)。同时，数据是可以实现回滚
+
+## COMMIT & ROLLBACK
+
+COMMIT:提交数据。
+一旦执行COMMIT，数据就被永久的保存在了数据库中，意味着数据不可以回滚。
+ROLLBACK:回滚数据。
+一旦执行ROLLBACK，则可以实现数据的回滚。回滚到最近的一次COMMIT之后。
+
+**DDL和DML的说明**
+
+DDL的操作一旦执行，就不可回滚。（DDL执行完一次后，会自动COMMIT）
+
+DML的操作默认情况下，一旦执行，也是不可回滚的。但是，如果在执行DNL之前，执行了`SET autocommit = FALSE`，则执行的DML操作就可以实现回滚。
