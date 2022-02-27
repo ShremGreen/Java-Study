@@ -655,3 +655,23 @@ ROLLBACK:回滚数据。
 DDL的操作一旦执行，就不可回滚。（DDL执行完一次后，会自动COMMIT）
 
 DML的操作默认情况下，一旦执行，也是不可回滚的。但是，如果在执行DNL之前，执行了`SET autocommit = FALSE`，则执行的DML操作就可以实现回滚。
+
+# 数据类型
+
+| 整数类型             | TINYINT、SMALLINT、MEDIUMINT、INT、BIGINT                    |
+| -------------------- | ------------------------------------------------------------ |
+| **浮点类型**         | **FLOAT、DOUBLE**                                            |
+| **定点数类型**       | **DECIMAL**                                                  |
+| **位类型**           | **BIT**                                                      |
+| **日期类型**         | **YEAR、TIME、DATE、DATETIME、TIMESTAMP**                    |
+| **文本字符串类型**   | **CHAR、VARCHAR、TINYTEXT、TEXT、MEDIUMTEXT、LONGTEXT**      |
+| **枚举类型**         | **ENUM**                                                     |
+| **集合类型**         | **SET**                                                      |
+| **二进制字符串类型** | **BINARY、VARBINARY、TINYBLOB、BLOB、MEDIUMBLOB、LONGBLOB**  |
+| **JSON类型**         | **JSON对象、JSON数组**                                       |
+| **空间数据类型**     | **单值类型：GEOMETRY、POINT、LINESTRING、POLYGON；<br />集合类型：MULTIPOINT、MULTILINESTRING、MULTIPOLYGON、 GEOMETRYCOLLECTION** |
+
+关于**浮点数和定点数**，需要注意：
+1.浮点数不准确，一般会产生误差。所以一般采用定点数DECIMAL
+2.使用 DECIMAL(M,D) 的方式表示高精度小数。其中，M被称为精度，D被称为标度。0<=M<=65， 0<=D<=30，D<M。例如：DECIMAL(5,2)，表示该列取值范围是-999.99 ~ 999.99。
+3.浮点数优点是取值范围大，但是不精准；定点数取值范围相对小，但是精准，没有误差。
