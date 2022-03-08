@@ -667,30 +667,30 @@ String substring(int start, int end) :从指定位置开始到指定位置结束
 
 ```java
 String的转换功能:
-        byte[] getBytes () 					把字符串转换为字节数组。
-        char[] toCharArray()  				把字符串转换为字符数组。
-        static String valueOf (char[] chs) 	把字符数组转成字符串。
-        static String valueOf (int i) 		把int类型的数据转成字符串。
-        注意: String类的value0f方法可以把任意类型的数据转成字符串。
-        String toLowerCase () 				把字符串转成小写。
-        String toUpperCase () 				把字符串转成大写。
-        String concat (String str) 			把字符串拼接。等价于“+”
+byte[] getBytes () 					把字符串转换为字节数组。
+char[] toCharArray()  				把字符串转换为字符数组。
+static String valueOf (char[] chs) 	把字符数组转成字符串。
+static String valueOf (int i) 		把int数据转成字符串。
+    注意: String类的value0f方法可以把任意类型的数据转成字符串。
+String toLowerCase () 				把字符串转成小写。
+String toUpperCase () 				把字符串转成大写。
+String concat (String str) 			把字符串拼接。等价于“+”
 ```
 
 ```java
 String类的替换功能:
-        String replace(char old, char new)
-        String replace(String old,String new)
-        String trim()						去除字符串前后空格
-        int compareTo(String str)			按字典顺序比较两个字符串
-        int compareToIgnoreCase(String stx)	同上忽略大小写
+String replace(char old, char new)
+    String replace(String old,String new)
+    String trim()						去除字符串前后空格
+    int compareTo(String str)			按字典顺序比较两个字符串
+    int compareToIgnoreCase(String stx)	同上忽略大小写
 ```
 
 ```java
 String类的判断功能：
-		boolean endsWith(String suffix)		测试此字符串是否以指定的后缀结束
-		boolean startsWith(String prefix)	测试此字符串是否以指定的前缀开始
-        boolean contains(CharSequence s)	 当且仅当此字符串包含指定的char值序列时，返回true
+    boolean endsWith(String suffix)		测试此字符串是否以指定的后缀结束
+    boolean startsWith(String prefix)	测试此字符串是否以指定的前缀开始
+    boolean contains(CharSequence s)	 当且仅当此字符串包含指定的char值序列时，返回true
 ```
 
 **面试题**
