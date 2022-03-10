@@ -419,3 +419,100 @@ e.printStackTrace();
 
 `executeQuery(String sql)`	执行给定的SQL语句，返回单个Resultset对象
 
+### ResultSet
+
+结果集对象。封装了SQL查询语句的结果。
+
+作用：存放SQL查询结果
+
+`ResultSet`对象提供了操作查询结果数据的方法
+
+```java
+boolean next()
+//将光标从当前位置向前移动一行并判断当前行是否为有效行
+xxx getXxx(参数)
+//获取数据
+```
+
+### PreparedStatement
+
+作用：
+1.预编译SQL语句并执行。
+2.预防SQL注入。
+
+#### SQL注入
+
+通过操作输入来修改事先定义好的SQL语句，用以达到执行代码对服务器进行攻击的方法。
+
+通俗讲，SQL注入就是利用**字符串的拼接**，人为的钻漏洞
+
+例：在一些登录界面，如果输入密码`'or'1'='1`,则不论账号密码是否正确，直接实现登录。
+
+#### PreparedStatement
+
+* 获取 PreparedStatement 对象
+
+  ```java
+  // SQL语句中的参数值，使用？占位符替代
+  String sql = "select * from user where username = ? and password = ?";
+  // 通过Connection对象获取，并传入对应的sql语句
+  PreparedStatement pstmt = conn.prepareStatement(sql);
+  ```
+
+* 设置参数值
+
+  将sql语句中参数使用 ? 进行代替
+
+  > PreparedStatement对象：setXxx(index，value)给 ? 赋值
+  >
+  > * index：第几个？，从1开始
+  > * value：该？的值
+
+* 执行SQL语句
+
+  > executeUpdate();  执行DDL语句和DML语句
+  >
+  > executeQuery();  执行DQL语句
+  >
+  > 注意：调用这两个方法时不需要传递SQL语句，因为获取SQL语句执行对象时已经对SQL语句进行预编译了。
+
+#### 原理
+
+PreparedStatement通过**将敏感字符进行转义**来防止SQL注入
+
+即通过反斜杠“\”：
+![image-20220310151823635](JavaWeb笔记.assets/image-20220310151823635.png)
+
+**Java操作数据库的流程：**
+1.检查SQL语句语法
+2.编译SQL语句。将SQL语句编译成可执行的函数。
+3.执行SQL语句
+
+其中：**检查SQL和编译SQL花费的时间比执行SQL的时间还要长**。如果我们只是重新设置参数，那么检查SQL语句和编译SQL语句不需要重复执行。这样可以提高性能，这就引入了**预编译**。
+
+开启预编译：在代码的url处加上`useServerPrepStmts = true`
+
+## 数据库连接池
+
+数据库连接池是个容器，负责分配、管理数据库连接(Connection)
+
+它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；
+
+释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏
+
+**好处：资源重用、提升系统响应速度、避免数据库连接遗漏**
+
+### 实现
+
+标准接口：DataSource
+
+官方(SUN) 提供的数据库连接池标准接口，由第三方组织实现此接口。该接口提供了获取连接的功能：
+
+```java
+Connection getConnection()
+```
+
+那么以后就不需要通过 `DriverManager` 对象获取 `Connection` 对象，而是通过连接池（DataSource）获取 `Connection` 对象。
+
+常见的数据库连接池
+Druid（德鲁伊）	阿里巴巴开源的数据库连接池项目 
