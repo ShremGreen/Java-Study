@@ -2,7 +2,7 @@
 
 网页：展现数据
 数据库：存储和管理数据
-JavaWeb程序：逻辑处理，连接网页和数据库
+JavaWeb：逻辑处理，连接网页和数据库
 
 # MySql
 
@@ -515,4 +515,120 @@ Connection getConnection()
 那么以后就不需要通过 `DriverManager` 对象获取 `Connection` 对象，而是通过连接池（DataSource）获取 `Connection` 对象。
 
 常见的数据库连接池
-Druid（德鲁伊）	阿里巴巴开源的数据库连接池项目 
+Druid（德鲁伊）	阿里巴巴开源的数据库连接池项目
+
+# Maven
+
+Maven是一个项目管理和构建的工具
+
+- 提供了一套标准化的项目结构
+- 提供了一套标准化的构建流程（编译，测试，打包，发布......)
+- 提供了一套依赖管理机制
+
+## 生命周期
+
+生命周期描述的是一次构建过程经历了多少个时间
+
+Maven将项目生命周期的划分为3套
+		clean		清洁工作
+		default	 核心工作
+		site			产生报告，发布站点
+
+注意：同一周期内，执行后面的命令，前面的所有命令都会自动执行
+
+![image-20220311102906435](JavaWeb笔记.assets/image-20220311102906435.png)
+
+## Maven命令
+
+![image-20210726173619353](JavaWeb笔记.assets/image-20210726173619353.png)
+
+## 坐标
+
+Maven中的坐标是**资源的唯一标识**，使用坐标来定义项目或引入项目所需的依赖。
+
+**Maven 坐标主要组成**
+
+* groupId：定义当前Maven项目隶属组织名称
+* artifactId：定义当前Maven项目名称
+* version：定义当前项目版本号
+
+```xml
+<!--当前项目坐标-->
+    <groupId>org.example</groupId>
+    <artifactId>maven_demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!--导入mysql  驱动jar包-->
+    <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>5.1.32</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+    </dependencies>
+```
+
+## 依赖
+
+即，使用坐标来描述当前项目依赖哪儿些第三方jar包
+
+**Dependency**
+
+### 依赖范围
+
+即对应jar包的作用范围（编译环境、测试环境、运行环境）
+
+**Scope**
+
+scope取值
+
+| **依赖范围** | 编译classpath | 测试classpath | 运行classpath | 例子              |
+| ------------ | ------------- | ------------- | ------------- | ----------------- |
+| **compile**  | Y             | Y             | Y             | logback           |
+| **test**     | -             | Y             | -             | Junit             |
+| **provided** | Y             | Y             | -             | servlet-api       |
+| **runtime**  | -             | Y             | Y             | jdbc驱动          |
+| **system**   | Y             | Y             | -             | 存储在本地的jar包 |
+
+* compile ：作用于编译环境、测试环境、运行环境。
+* test ： 作用于测试环境。如Junit
+* provided ：作用于编译环境、测试环境。
+* runtime  ： 作用于测试环境、运行环境。jdbc驱动一般将 `scope` 设置为该值
+
+# MyBatis
+
+MyBatis是一款持久层框架，**用于简化JDBC开发**
+
+MyBatis几乎免除了所有的JDBC代码以及设置参数和获取结果集的工作
+
+**框架：通用的软件基础代码模型**
+**持久层：负责将数据保存到数据库的代码**
+**JavaEE三层框架：表现层、业务层、持久层**
+
+## JDBC缺点
+
+![image-20220312110254588](JavaWeb笔记.assets/image-20220312110254588.png)
+
+解决硬编码的方式：在程序外建立配置文件，专门用来存放重要的字符串等信息
+
+## MyBatis基本操作
+
+步骤：
+
+```txt
+1.创建user表，添加数据创建模块，导入坐标
+2.编写MyBatis核心配置文件
+3.替换连接信息解决硬编码问题编写SQL映射文件
+4.统一管理sql语句，解决硬编码问题
+5.编码
+		定义POJO类
+		加载核心配置文件，获取SqlSessionFactory 对象
+		获取SqlSession对象，执行SQL语句
+		释放资源
+```
+
