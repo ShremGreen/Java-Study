@@ -614,21 +614,26 @@ MyBatis几乎免除了所有的JDBC代码以及设置参数和获取结果集的
 
 ![image-20220312110254588](JavaWeb笔记.assets/image-20220312110254588.png)
 
-解决硬编码的方式：在程序外建立配置文件，专门用来存放重要的字符串等信息
+解决硬编码的方式：在程序外建立**配置文件XML**，专门用来存放重要的字符串等信息
 
 ## MyBatis基本操作
 
 步骤：
 
 ```txt
-1.创建user表，添加数据创建模块，导入坐标
-2.编写MyBatis核心配置文件
-3.替换连接信息解决硬编码问题编写SQL映射文件
-4.统一管理sql语句，解决硬编码问题
+1.创建user表，添加数据
+2.创建模块，导入坐标
+3.编写MyBatis核心配置文件--替换连接信息解决硬编码问题
+4.编写SQL映射文件--统一管理sql语句，解决硬编码问题
 5.编码
 		定义POJO类
 		加载核心配置文件，获取SqlSessionFactory 对象
 		获取SqlSession对象，执行SQL语句
 		释放资源
 ```
+
+**入门官网**
+https://mybatis.org/mybatis-3/zh/getting-started.html
+
+# HTML
 
