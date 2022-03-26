@@ -637,3 +637,207 @@ https://mybatis.org/mybatis-3/zh/getting-started.html
 
 # HTML
 
+html语言是解释性语言，不是编译型语言(Java等)。
+浏览器是容错的。
+
+## 标签
+
+html页面由标签组成，如`<html></html>`
+
+一个简单的html页面必须有`<head>...</head>`、`<body>...<\body>`
+
+- title	网页标题
+
+```html
+<title>这是我的第一个网页</title>
+```
+
+- meta	设置字符集（编码方式）
+
+```html
+<meta charset="UTF-8">
+```
+
+- br/	换行
+
+```html
+HELLO WORLD!<br/>你好，HTML！
+```
+
+- p	段落标签
+
+```html
+<p>这里是一个段落</p>
+```
+
+- img 标签图片标签
+  	src属性表示图片文件的路径
+  	width和height表示图片的大小
+  	alt表示图片的提示
+
+```html
+<img src="D:\sgg2021\0927_javaweb\1109\02.代码\imgs\girl.jpg" width="57" height="73" alt="这里是一张图片"/>
+```
+
+- h1~h6	标题标签
+
+```html
+<h1>标题一</h1>
+```
+
+- 列表标签:
+  - ol 有序列表
+  	start 表示从*开始，type 显示的类型：A a I i 1(deafult)
+  - ul 无序列表
+  	type disc(default) , circle , square
+
+```html
+<ol type="i" start="3">
+<li>扫地僧</li>
+<li>萧远山</li>
+<li>慕容博</li>
+<li>虚竹</li>
+<li>阿紫</li>
+</ol>
+```
+
+- u 下划线
+- b 粗体
+- i 斜体
+
+```html
+你是<b><i><u>喜欢</u></i></b>吃<b>甜</b>月饼还是<i>咸</i><u>月饼</u>？
+```
+
+- 上标 sup   下标 sub
+
+- 小于号 `&lt;` 大于等于号` &ge;`
+
+- a 表示超链接
+  		href 链接的地址
+    		target:
+    			_self 在本窗口打开
+    			_blank 在一个新窗口打开
+    			_parent 在父窗口打开
+    			_top  在顶层窗口打开
+
+```html
+<a href="http://www.baidu.com" target="_self">百度一下</a>
+```
+
+- div	层
+
+- table	表格
+
+行		tr
+列		td
+表头列	th
+
+table中有如下属性（虽然已经淘汰，但是最好了解一下）
+
+border：表格边框的粗细
+width:表格的宽度
+cellspacing：单元格间距
+cellpadding：单元格填充
+
+tr中有一个属性： align -> center , left , right 
+
+rowspan : 行合并
+colspan : 列合并
+
+```html
+<table border="1" cellspacing="0" cellpadding="4" width="600">
+			<tr>
+				<th>名称</th>
+				<th>单价</th>
+				<th>数量</th>
+				<th>小计</th>
+				<th>操作</th>
+			</tr>
+			<tr align="center">
+				<td>苹果</td>
+				<td rowspan="2">5</td>
+				<td>20</td>
+				<td>100</td>
+				<td><img src="imgs/del.jpg" width="24" height="24"/></td>
+			</tr>
+			<tr align="center">
+				<td>菠萝</td>
+				<td>15</td>
+				<td>45</td>
+				<td><img src="imgs/del.jpg" width="24" height="24"/></td>
+			</tr>
+			<tr align="center">
+				<td>总计</td>
+				<td colspan="4">181</td>
+			</tr>
+</table>
+```
+
+- 表单	form
+
+```html
+<form action="demo04.html" method="post">
+		昵称：<input type="text" value="请输入你的昵称"/><br/>
+		密码：<input type="password" name="pwd"/><br/>
+		性别：<input type="radio" name="gender" value="male"/>男
+	  		<input type="radio" name="gender" value="female" checked/>女<br/>
+		爱好：<input type="checkbox" name="hobby" value="basketball"/>篮球
+			<input type="checkbox" name="hobby" value="football" checked/>足球
+			<input type="checkbox" name="hobby" value="earth" checked/>地球<br/>
+		星座：<select name="star">
+				<option value="1">白羊座</option>
+				<option value="2" selected>金牛座</option>
+				<option value="3">双子座</option>
+				<option value="4">天蝎座</option>
+				<option value="5">天秤座</option>
+				</select><br/>
+		备注：<textarea name="remark" rows="4" cols="50"></textarea><br/>
+		<input type="submit" value=" 注 册 "/>
+		<input type="reset" value="重置"/>
+		<input type="button" value="这是一个普通按钮"/>
+</form>
+```
+
+# CSS
+
+CSS 决定页面的美观风格
+
+盒子模型：border边框、margin间距、padding填充
+
+定位和浮动：position、float、DIV + CSS布局
+
+https://heavy_code_industry.gitee.io/code_heavy_industry/pro001-javaweb/lecture/chapter02/
+
+# JavaScript
+
+JS是客户端运行的脚本语句
+
+特点：
+1.JS是一种弱类型语言	如：`var str = 99;`
+2.JS函数	如：`function hello(var num) {...}`
+
+# CS & BS
+
+**CS	客户端服务器架构模式**
+
+- 优点：
+
+  充分利用客户端机器的资源，减轻服务器负荷。
+
+  一部分安全性要求不高的计算任务和存储任务放在客户端执行，不需要把所有的计算和存储都在服务器端执行，从而能减轻服务器压力，并且减轻网络负荷。
+
+- 缺点：
+
+  需要安装，升级维护成本高
+
+**BS	浏览器端服务器框架模式**
+
+- 优点：
+
+  客户端不需要安装；维护成本低
+
+- 缺点：
+
+  所有的计算和存储任务都是放在服务器端的，服务器的负荷较重；在服务器计算完成之后把结果再传给客户端，因此客户端和服务器端会进行频繁的数据通信，从而网络负荷较重
+

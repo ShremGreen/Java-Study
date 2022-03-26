@@ -690,7 +690,7 @@ String replace(char old, char new)
 String类的判断功能：
     boolean endsWith(String suffix)		测试此字符串是否以指定的后缀结束
     boolean startsWith(String prefix)	测试此字符串是否以指定的前缀开始
-    boolean contains(CharSequence s)	 当且仅当此字符串包含指定的char值序列时，返回true
+    boolean contains(CharSequence s)	当且仅当此字符串包含指定的char值序列时，返回true
 ```
 
 **面试题**
@@ -796,7 +796,7 @@ StringBuffer的删除功能：
     public StringBuffer delete(int start,int end)
 StringBuffer的替换功能：
     public StringBuffer replace(int start,int end,String str)
-    public void setCharAt(int )
+    public void setCharAt(int index,char value)
 StringBuffer的反转功能：
     public StringBuffer reverse()
 StringBuffer的查找功能：
@@ -1676,6 +1676,7 @@ Object remove(Object key)//移除指定key的key-value对，并返回value
 void clear()//清空当前map中的所有数据
 元素查询
 Object get(Object key)//获取指定key对应的value
+Object getOrDefault(Object key, V defaultValue)//获取value，找不到返回defaultValue
 boolean containsKey(Object key)//是否包含指定的key
 boolean containsValue(Object value)//是否包含指定的value
 int size()//返回map中key-value对的个数
