@@ -1466,16 +1466,16 @@ void clear()
 boolean isEmpty()
 //判断是否包含某个元素
 boolean contains(Object obj)
-    通过equals()
+    //通过equals()
 boolean containsAll(Collection c)
-    通过equals()
+    //通过equals()
 //删除
 boolean remove(Object obj)
-    equals()判断。只会删除找到的第一个元素
+    //equals()判断。只会删除找到的第一个元素
 boolean removeAll(Collection coll)
-    取两集合的差集
+    //取两集合的差集
 boolean retainAll(Collection c)
-    取两集合的交集
+    //取两集合的交集
 //判断集合相等
 boolean equals(Object obj)
 //转成Objectl数组
@@ -1484,7 +1484,7 @@ Object[] toArray()
 hashCode()
 //遍历
 iterator()
-    返回迭代器对象，用于集合遍历
+    //返回迭代器对象，用于集合遍历
 //数组转为集合	Arrays类中
 asList()
 ```
@@ -2174,7 +2174,7 @@ TCP/IP协议形成的四层体系结构，即**物理链路层、IP层、传输�
 
 # 反射
 
-反射Reflection是被视为**动态语言**的关键，反射机制允许程序在执行期间取得任何类的内部信息，并且可以直接操作任意对象的内部属性和方法。
+反射Reflection是被视为**动态语言**的关键，反射机制允许程序在**运行期间**取得任何类的内部信息，并且可以直接操作任意对象的内部属性和方法。
 
 **动态语言：运行时代码可以根据某些条件改变自身结构**
 静态语言：运行时结构不可变
