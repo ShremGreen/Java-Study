@@ -1367,7 +1367,7 @@ Annotation，即代码里的特殊标记，这些标记可以在编译, 类加
 JDK内置的三个基本注解：
 @Override			表示重写父类方法
 @Deprecated			表示所修饰的元素已过时
-@SuppressWarnings	 抑制编译器警告
+@SuppressWarnings	抑制编译器警告
 ```
 
 ## 作用三	

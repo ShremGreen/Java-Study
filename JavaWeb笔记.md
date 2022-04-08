@@ -865,6 +865,8 @@ Tomcat可作为**Web服务器**和**Servlet容器**
 
 # Servlet
 
+在整个web应用中，**Servlet主要负责处理请求、协调调度功能**。即web应用中的控制器。
+
 - 继承关系
 
 ​	HttpServlet -> GenericServlet -> Servlet
@@ -898,6 +900,8 @@ HttpServlet中do方法默认都是405实现风格，需要子类实现对应方�
 当容器关闭时，其中的servlet实例会被销毁
 
 如果需要提高响应速度，我们应该设置Servlet的初始化时机。通过`<load-on-startup>`来设置servlet启动顺序,数字越小，启动越靠前，最小值0。
+
+Tomcat负责维护Servlet的生命周期。
 
 ## Servlet 特点
 
