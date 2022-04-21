@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id = "student" class = "collection.Student">
+        <property name="courses">
+            <array>
+                <value>语文</value>
+                <value>数学</value>
+            </array>
+        </property>
+
+        <property name="list">
+            <list>
+                <value>政治</value>
+                <value>历史</value>
+            </list>
+        </property>
+
+        <property name="set">
+            <set>
+                <value>物理</value>
+                <value>化学</value>
+            </set>
+        </property>
+
+        <property name="maps">
+            <map>
+                <entry key = "java" value = "J"></entry>
+                <entry key = "C++" value = "C"></entry>
+            </map>
+        </property>
+    </bean>
+</beans>
